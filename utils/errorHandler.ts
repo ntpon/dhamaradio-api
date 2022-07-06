@@ -15,11 +15,13 @@ export const errorHandler = (
     })
   }
   if (err instanceof HttpError) {
-    if (err.message.length > 0) {
-      return res.status(err.code).json({
-        code: err.code,
-        error: "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง",
-      })
+    if (Array.isArray(err.message)) {
+      return res
+        .status(err.code)
+        .json({
+          code: err.code,
+          error: "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง",
+        })
     } else {
       return res.status(err.code).json({ code: err.code, error: err.message })
     }
