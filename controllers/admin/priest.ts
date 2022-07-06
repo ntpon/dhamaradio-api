@@ -6,6 +6,7 @@ import { Priest } from "../../models/Priest"
 import { HttpError } from "../../utils/HttpError"
 import { strToSlug } from "../../utils/slug"
 import { getPagination } from "../../utils/pagination"
+import { getSearch } from "../../utils/search"
 
 // CRUD
 export const createPriest = async (
@@ -108,13 +109,19 @@ export const getAllPriest = async (
   next: NextFunction
 ) => {
   try {
+    const conditionSearch = getSearch(req, ["fullName"])
     const { limit, offset } = getPagination(req)
     const priests = await Priest.findAndCountAll({
       limit,
       offset,
+      where: { ...conditionSearch },
+      order: [["updatedOn", "DESC"]],
     })
-
-    res.json({ priests })
+    let totalPage = null
+    if (priests.count > 0) {
+      totalPage = Math.ceil(priests.count / limit)
+    }
+    res.json({ priests: priests.rows || [], totalPage })
   } catch (error) {
     next(error)
   }

@@ -7,6 +7,8 @@ import { HttpError } from "../../utils/HttpError"
 import { strToSlug } from "../../utils/slug"
 import { getPagination } from "../../utils/pagination"
 import { Priest } from "../../models/Priest"
+import { getSearch } from "../../utils/search"
+import { Op } from "sequelize"
 
 export const createAlbum = async (
   req: Request,
@@ -125,13 +127,32 @@ export const getAllAlbum = async (
   next: NextFunction
 ) => {
   try {
+    const conditionSearch = getSearch(req, [
+      "$Album.name$",
+      "$priest.full_name$",
+    ])
     const { limit, offset } = getPagination(req)
     const albums = await Album.findAndCountAll({
       limit,
       offset,
+      include: [
+        {
+          model: Priest,
+          required: true,
+          duplicating: false,
+        },
+      ],
+      where: {
+        ...conditionSearch,
+      },
+      order: [["updatedOn", "DESC"]],
     })
 
-    res.json({ albums })
+    let totalPage = null
+    if (albums.count > 0) {
+      totalPage = Math.ceil(albums.count / limit)
+    }
+    res.json({ albums: albums.rows || [], totalPage })
   } catch (error) {
     next(error)
   }
@@ -186,6 +207,26 @@ export const updateIsActive = async (
     }
     await album.update({
       isActive,
+    })
+    res.json({ message: "แก้ไขข้อมูลสำเร็จ", album })
+  } catch (error) {
+    next(error)
+  }
+}
+export const updateIsRecommend = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params
+    const { isRecommend } = req.body
+    const album = await Album.findByPk(id)
+    if (!album) {
+      throw HttpError.notFound("ไม่พบข้อมูล")
+    }
+    await album.update({
+      isRecommend,
     })
     res.json({ message: "แก้ไขข้อมูลสำเร็จ", album })
   } catch (error) {

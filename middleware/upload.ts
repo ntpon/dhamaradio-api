@@ -12,14 +12,15 @@ const upload = multer({
     },
   }),
   fileFilter: (req, file, cb) => {
-    // console.log(file)
+    console.log(file.mimetype)
     if (
       file.mimetype === "image/png" ||
       file.mimetype === "image/jpg" ||
       file.mimetype === "image/jpeg" ||
       file.mimetype === "image/svg+xml" ||
       file.mimetype === "audio/mpeg" ||
-      file.mimetype === "audio/wave"
+      file.mimetype === "audio/wave" ||
+      file.mimetype === "audio/wav"
     ) {
       cb(null, true)
     } else {

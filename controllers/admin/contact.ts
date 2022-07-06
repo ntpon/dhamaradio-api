@@ -4,6 +4,7 @@ import { Contact } from "../../models/Contact"
 import { Quote } from "../../models/Quote"
 import { HttpError } from "../../utils/HttpError"
 import { getPagination } from "../../utils/pagination"
+import { getSearch } from "../../utils/search"
 
 export const getAllContact = async (
   req: Request,
@@ -11,13 +12,26 @@ export const getAllContact = async (
   next: NextFunction
 ) => {
   try {
+    const conditions = getSearch(req, [
+      "title",
+      "description",
+      "fullName",
+      "email",
+      "phone",
+    ])
     const { limit, offset } = getPagination(req)
     const contacts = await Contact.findAndCountAll({
       limit,
       offset,
+      where: {
+        ...conditions,
+      },
     })
-
-    res.json({ contacts })
+    let totalPage = null
+    if (contacts.count > 0) {
+      totalPage = Math.ceil(contacts.count / limit)
+    }
+    res.json({ contacts: contacts.rows || [], totalPage })
   } catch (error) {
     next(error)
   }

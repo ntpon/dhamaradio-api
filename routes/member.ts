@@ -7,7 +7,7 @@ import {
   getPlaylistBySlug,
   createAudioToPlaylist,
   getPlaylistsWithCountAudio,
-} from "../controllers/memeber"
+} from "../controllers/member"
 import { auth } from "../middleware/auth"
 import upload from "../middleware/upload"
 
@@ -27,11 +27,7 @@ router.post(
       .not()
       .isEmpty()
       .withMessage("กรุณาเพิ่มคำอธิบายรายการ"),
-    check("isPrivate")
-      .not()
-      .isEmpty()
-      .isBoolean()
-      .withMessage("กรุณาเลือกสถานะรายการ"),
+    check("isPrivate").not().isEmpty().withMessage("กรุณาเลือกสถานะรายการ"),
   ],
   createPlaylist
 )

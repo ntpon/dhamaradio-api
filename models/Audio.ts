@@ -68,7 +68,7 @@ export class Audio extends Model {
   @Column({
     field: "updated_at",
   })
-  updatedDate: Date
+  updatedOn: Date
 
   @BelongsTo(() => Album)
   album!: Album

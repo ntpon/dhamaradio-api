@@ -7,6 +7,8 @@ import { HttpError } from "../../utils/HttpError"
 import { strToSlug } from "../../utils/slug"
 import { getPagination } from "../../utils/pagination"
 import { Album } from "../../models/Album"
+import { getSearch } from "../../utils/search"
+import { Priest } from "../../models/Priest"
 
 export const createAudio = async (
   req: Request,
@@ -21,7 +23,7 @@ export const createAudio = async (
     const { name, albumId } = req.body
 
     const album = await Album.findByPk(albumId)
-    if (!album || !album.isActive) {
+    if (!album) {
       throw HttpError.badRequest("ไม่มีชุดเสียง")
     }
 
@@ -67,7 +69,7 @@ export const updateAudio = async (
 
     if (audio.albumId !== albumId) {
       const album = await Album.findByPk(albumId)
-      if (!album || !album.isActive) {
+      if (!album) {
         throw HttpError.badRequest("ไม่มีชุดเสียง")
       }
     }
@@ -100,12 +102,31 @@ export const getAllAudio = async (
   next: NextFunction
 ) => {
   try {
+    const conditionSearch = getSearch(req, ["$Audio.name$", "$album.name$"])
     const { limit, offset } = getPagination(req)
     const audios = await Audio.findAndCountAll({
       limit,
       offset,
+      where: {
+        ...conditionSearch,
+      },
+      include: [
+        {
+          model: Album,
+          include: [
+            {
+              model: Priest,
+            },
+          ],
+        },
+      ],
+      order: [["updatedOn", "DESC"]],
     })
-    res.json({ audios })
+    let totalPage = null
+    if (audios.count > 0) {
+      totalPage = Math.ceil(audios.count / limit)
+    }
+    res.json({ audios: audios.rows || [], totalPage })
   } catch (error) {
     next(error)
   }

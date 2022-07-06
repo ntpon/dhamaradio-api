@@ -10,6 +10,7 @@ import clientRoute from "./routes/client"
 import memberRoute from "./routes/member"
 
 import seedRoute from "./routes/admin/seed"
+import roleAdminRoute from "./routes/admin/role"
 import userAdminRoute from "./routes/admin/user"
 import albumAdminRoute from "./routes/admin/album"
 import audioAdminRoute from "./routes/admin/audio"
@@ -39,6 +40,7 @@ app.use("/api/v1/client", clientRoute)
 app.use("/api/v1/member", memberRoute)
 
 app.use("/api/v1/admin/seed", seedRoute)
+app.use("/api/v1/admin/role", roleAdminRoute)
 app.use("/api/v1/admin/user", userAdminRoute)
 app.use("/api/v1/admin/album", albumAdminRoute)
 app.use("/api/v1/admin/audio", audioAdminRoute)

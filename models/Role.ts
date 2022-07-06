@@ -26,6 +26,14 @@ export class Role extends Model {
   })
   public description!: string
 
+  @Column({
+    defaultValue: true,
+    allowNull: false,
+    type: "BOOLEAN",
+    field: "is_active",
+  })
+  public isActive!: boolean
+
   @CreatedAt
   @Column({
     field: "created_at",

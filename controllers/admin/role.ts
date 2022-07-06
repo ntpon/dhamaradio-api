@@ -3,6 +3,7 @@ import { validationResult } from "express-validator"
 import { Role } from "../../models/Role"
 import { HttpError } from "../../utils/HttpError"
 import { getPagination } from "../../utils/pagination"
+import { getSearch } from "../../utils/search"
 
 export const createRole = async (
   req: Request,
@@ -14,11 +15,10 @@ export const createRole = async (
     if (!errors.isEmpty()) {
       throw HttpError.badRequest(errors.array())
     }
-    const { title, author, isActive } = req.body
+    const { name, description } = req.body
     const role = await Role.create({
-      title,
-      author,
-      isActive,
+      name,
+      description,
     })
     res.status(201).json({ message: "สร้างข้อมูลสำเร็จ", role })
   } catch (error) {
@@ -37,15 +37,14 @@ export const updateRole = async (
       throw HttpError.badRequest(errors.array())
     }
     const { id } = req.params
-    const { title, author, isActive } = req.body
+    const { name, description } = req.body
     const role = await Role.findByPk(id)
     if (!role) {
       throw HttpError.notFound("ไม่พบข้อมูล")
     }
     await role.update({
-      title,
-      author,
-      isActive,
+      name,
+      description,
     })
     res.json({ message: "แก้ไขข้อมูลสำเร็จ", role })
   } catch (error) {
@@ -59,13 +58,22 @@ export const getAllRole = async (
   next: NextFunction
 ) => {
   try {
+    const conditionSearch = getSearch(req, ["name", "description"])
     const { limit, offset } = getPagination(req)
     const roles = await Role.findAndCountAll({
       limit,
       offset,
+      where: {
+        ...conditionSearch,
+      },
+      order: [["updatedOn", "DESC"]],
     })
+    let totalPage = null
+    if (roles.count > 0) {
+      totalPage = Math.ceil(roles.count / limit)
+    }
 
-    res.json({ roles })
+    res.json({ roles: roles.rows || [], totalPage })
   } catch (error) {
     next(error)
   }

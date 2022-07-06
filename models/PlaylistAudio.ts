@@ -38,5 +38,5 @@ export class PlaylistAudio extends Model {
   @Column({
     field: "updated_at",
   })
-  updatedDate: Date
+  updatedOn: Date
 }

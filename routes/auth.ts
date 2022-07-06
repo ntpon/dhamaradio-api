@@ -34,6 +34,11 @@ router.post(
   [check("email").not().isEmpty(), check("password").not().isEmpty()],
   login
 )
+router.post(
+  "/login/:role",
+  [check("email").not().isEmpty(), check("password").not().isEmpty()],
+  login
+)
 router.patch(
   "/me",
   auth,

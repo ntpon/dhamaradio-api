@@ -107,7 +107,7 @@ export const login = async (
       throw HttpError.badRequest(errors.array())
     }
     const { email, password } = req.body
-
+    const { role } = req.params
     const user = await User.findOne({
       where: {
         email,
@@ -127,6 +127,12 @@ export const login = async (
       throw HttpError.badRequest(
         "อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบข้อมูลอีกครั้ง"
       )
+    }
+
+    if (role) {
+      if (user.role.name !== "admin") {
+        throw HttpError.unauthorized("คุณไม่มีสิทธิ์ในการเข้าถึงข้อมูลนี้")
+      }
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_KEY || "", {

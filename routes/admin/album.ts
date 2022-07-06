@@ -7,6 +7,7 @@ import {
   getAllAlbum,
   updateAlbum,
   updateIsActive,
+  updateIsRecommend,
 } from "../../controllers/admin/album"
 import { auth, authRole } from "../../middleware/auth"
 
@@ -25,11 +26,6 @@ router.post(
     check("name").not().isEmpty().withMessage("กรุณาเพิ่มข้อความ"),
     check("description").not().isEmpty().withMessage("กรุณาเพิ่มข้อความ"),
     check("priestId").not().isEmpty().withMessage("กรุณาเพิ่มชื่อพระอาจารย์"),
-    check("isRecommend")
-      .not()
-      .isEmpty()
-      .isBoolean()
-      .withMessage("กรุณาเพิ่มสถานะแนะนำ"),
   ],
   createAlbum
 )
@@ -42,11 +38,6 @@ router.patch(
     check("name").not().isEmpty().withMessage("กรุณาเพิ่มข้อความ"),
     check("description").not().isEmpty().withMessage("กรุณาเพิ่มข้อความ"),
     check("priestId").not().isEmpty().withMessage("กรุณาเพิ่มชื่อพระอาจารย์"),
-    check("isRecommend")
-      .not()
-      .isEmpty()
-      .isBoolean()
-      .withMessage("กรุณาเพิ่มสถานะแนะนำ"),
   ],
   updateAlbum
 )
@@ -56,6 +47,13 @@ router.patch(
   authRole("admin"),
   [check("isActive").not().isEmpty().withMessage("กรุณาเพิ่มสถานะ")],
   updateIsActive
+)
+router.patch(
+  "/:id/recommend",
+  auth,
+  authRole("admin"),
+  [check("isRecommend").not().isEmpty().withMessage("กรุณาเพิ่มสถานะ")],
+  updateIsRecommend
 )
 
 router.delete("/:id", auth, authRole("admin"), deleteAlbum)

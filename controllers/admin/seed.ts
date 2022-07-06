@@ -16,40 +16,30 @@ export const createRoleWithAdmin = async (
   next: NextFunction
 ) => {
   try {
-    let roles = await Role.findAll()
-    if (!roles) {
-      roles = await Role.bulkCreate([
-        {
-          name: "user",
-          description: "ผู้ใช้งานระบบ",
-        },
-        {
-          name: "admin",
-          description: "ผู้ดูแลระบบ",
-        },
-      ])
-    }
-
-    let admin = await User.findOne({
-      where: {
-        email: "admin@admin.com",
+    const roles = await Role.bulkCreate([
+      {
+        name: "user",
+        description: "ผู้ใช้งานระบบ",
       },
-    })
-    if (!admin) {
-      const roleAdmin = roles[1]
-      const hashedPassword = await bcrypt.hash(
-        "password@admin",
-        Number(process.env.PASSWORD_LENGTH_SALT)
-      )
+      {
+        name: "admin",
+        description: "ผู้ดูแลระบบ",
+      },
+    ])
 
-      admin = await User.create({
-        roleId: roleAdmin.id,
-        firstName: "Super",
-        lastName: "Admin",
-        email: "admin@admin.com",
-        password: hashedPassword,
-      })
-    }
+    const roleAdmin = roles[1]
+    const hashedPassword = await bcrypt.hash(
+      "password@admin",
+      Number(process.env.PASSWORD_LENGTH_SALT)
+    )
+
+    const admin = await User.create({
+      roleId: roleAdmin.id,
+      firstName: "Super",
+      lastName: "Admin",
+      email: "admin@admin.com",
+      password: hashedPassword,
+    })
 
     return res.json({
       status: "success",

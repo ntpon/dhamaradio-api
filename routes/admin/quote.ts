@@ -22,11 +22,7 @@ router.post(
   [
     check("title").not().isEmpty().withMessage("กรุณาเพิ่มข้อความ"),
     check("author").not().isEmpty().withMessage("กรุณาเพิ่มชื่อผู้เขียน"),
-    check("isActive")
-      .not()
-      .isBoolean()
-      .isEmpty()
-      .withMessage("กรุณาเพิ่มสถานะ"),
+    check("isActive").not().isEmpty().withMessage("กรุณาเพิ่มสถานะ"),
   ],
   createQuote
 )
@@ -37,11 +33,7 @@ router.patch(
   [
     check("title").not().isEmpty().withMessage("กรุณาเพิ่มข้อความ"),
     check("author").not().isEmpty().withMessage("กรุณาเพิ่มชื่อผู้เขียน"),
-    check("isActive")
-      .not()
-      .isBoolean()
-      .isEmpty()
-      .withMessage("กรุณาเพิ่มสถานะ"),
+    check("isActive").not().isEmpty().withMessage("กรุณาเพิ่มสถานะ"),
   ],
   updateQuote
 )

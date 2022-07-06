@@ -9,6 +9,7 @@ import { HttpError } from "../../utils/HttpError"
 import { getPagination } from "../../utils/pagination"
 import { Playlist } from "../../models/Playlist"
 import { Role } from "../../models/Role"
+import { getSearch } from "../../utils/search"
 
 // CRUD
 export const createUser = async (
@@ -40,7 +41,6 @@ export const createUser = async (
         )
       )
     }
-
     if (!existingRole) {
       return next(HttpError.badRequest("ไม่พบสิทธิ์การใช้งาน"))
     }
@@ -193,17 +193,25 @@ export const getAllUser = async (
   next: NextFunction
 ) => {
   try {
+    const conditionSearch = getSearch(req, ["firstName", "lastName", "email"])
     const { limit, offset } = getPagination(req)
     const users = await User.findAndCountAll({
       limit,
       offset,
+      where: {
+        ...conditionSearch,
+      },
       include: {
         model: Role,
         attributes: ["name"],
       },
+      order: [["updatedOn", "DESC"]],
     })
-
-    res.json({ users })
+    let totalPage = null
+    if (users.count > 0) {
+      totalPage = Math.ceil(users.count / limit)
+    }
+    res.json({ users: users.rows || [], totalPage })
   } catch (error) {
     next(error)
   }
@@ -222,7 +230,7 @@ export const getUserById = async (
       },
       include: {
         model: Role,
-        attributes: ["name"],
+        attributes: ["name", "id"],
       },
     })
     if (!user) {
@@ -241,6 +249,9 @@ export const deleteUser = async (
 ) => {
   try {
     const { id } = req.params
+    if (id === req.user.id.toString()) {
+      throw HttpError.badRequest("ไม่สามารถลบผู้ใช้ตนเองได้")
+    }
     const user = await User.findByPk(id)
     if (!user) {
       throw HttpError.notFound("ไม่พบข้อมูล")
@@ -260,6 +271,10 @@ export const updateIsActive = async (
   try {
     const { id } = req.params
     const { isActive } = req.body
+    if (id === req.user.id.toString()) {
+      throw HttpError.badRequest("ไม่สามารถเปลี่ยนสถานะผู้ใช้ตนเองได้")
+    }
+
     const user = await User.findByPk(id)
     if (!user) {
       throw HttpError.notFound("ไม่พบข้อมูล")

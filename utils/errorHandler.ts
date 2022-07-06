@@ -15,7 +15,14 @@ export const errorHandler = (
     })
   }
   if (err instanceof HttpError) {
-    return res.status(err.code).json({ code: err.code, error: err.message })
+    if (err.message.length > 0) {
+      return res.status(err.code).json({
+        code: err.code,
+        error: "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้ง",
+      })
+    } else {
+      return res.status(err.code).json({ code: err.code, error: err.message })
+    }
   }
 
   if (process.env.APP_MODE === "production") {
