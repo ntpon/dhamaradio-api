@@ -12,8 +12,8 @@ import { auth, authRole } from "../../middleware/auth"
 
 const router = express.Router()
 
-router.get("/", auth, authRole("admin"), getAllQuote)
-router.get("/:id", auth, authRole("admin"), getQuoteById)
+router.get("/", auth, authRole("admin", "viewer"), getAllQuote)
+router.get("/:id", auth, authRole("admin", "viewer"), getQuoteById)
 
 router.post(
   "/",

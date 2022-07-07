@@ -15,8 +15,8 @@ import upload from "../../middleware/upload"
 
 const router = express.Router()
 
-router.get("/", auth, authRole("admin"), getAllAlbum)
-router.get("/:id", auth, authRole("admin"), getAlbumById)
+router.get("/", auth, authRole("admin", "viewer"), getAllAlbum)
+router.get("/:id", auth, authRole("admin", "viewer"), getAlbumById)
 router.post(
   "/",
   auth,

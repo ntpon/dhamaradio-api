@@ -10,9 +10,9 @@ import {
 } from "../../controllers/admin/role"
 import { auth, authRole } from "../../middleware/auth"
 const router = express.Router()
-router.get("/", auth, authRole("admin"), getAllRole)
-router.get("/all", auth, authRole("admin"), getAllRole)
-router.get("/:id", auth, authRole("admin"), getRoleById)
+router.get("/", auth, authRole("admin", "viewer"), getAllRole)
+router.get("/all", auth, authRole("admin", "viewer"), getAllRole)
+router.get("/:id", auth, authRole("admin", "viewer"), getRoleById)
 router.post(
   "/",
   auth,
@@ -33,8 +33,6 @@ router.patch(
   ],
   updateRole
 )
-
-router.delete("/:id", auth, authRole("admin"), deleteRole)
 router.patch(
   "/:id/active",
   auth,
@@ -42,4 +40,7 @@ router.patch(
   [check("isActive").not().isEmpty().withMessage("กรุณาเพิ่มสถานะ")],
   updateIsActive
 )
+
+router.delete("/:id", auth, authRole("admin"), deleteRole)
+
 export default router

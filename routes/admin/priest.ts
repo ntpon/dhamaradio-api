@@ -13,8 +13,8 @@ import upload from "../../middleware/upload"
 
 const router = express.Router()
 
-router.get("/", auth, authRole("admin"), getAllPriest)
-router.get("/:id", auth, authRole("admin"), getPriestById)
+router.get("/", auth, authRole("admin", "viewer"), getAllPriest)
+router.get("/:id", auth, authRole("admin", "viewer"), getPriestById)
 
 router.post(
   "/",

@@ -13,8 +13,8 @@ import upload from "../../middleware/upload"
 
 const router = express.Router()
 
-router.get("/", auth, authRole("admin"), getAllAudio)
-router.get("/:id", auth, authRole("admin"), getAudioById)
+router.get("/", auth, authRole("admin", "viewer"), getAllAudio)
+router.get("/:id", auth, authRole("admin", "viewer"), getAudioById)
 router.post(
   "/",
   auth,

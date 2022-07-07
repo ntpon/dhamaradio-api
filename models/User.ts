@@ -12,7 +12,7 @@ import {
 import { Playlist } from "./Playlist"
 import { Role } from "./Role"
 
-@Table({ tableName: "users" })
+@Table({ tableName: "users", timestamps: true, underscored: true })
 export class User extends Model {
   public id!: number
 
