@@ -138,6 +138,7 @@ export const getAllAlbum = async (
       include: [
         {
           model: Priest,
+          as: "priest",
           required: true,
           duplicating: false,
         },
@@ -145,7 +146,7 @@ export const getAllAlbum = async (
       where: {
         ...conditionSearch,
       },
-      order: [["updatedOn", "DESC"]],
+      order: [["updatedAt", "DESC"]],
     })
 
     let totalPage = null

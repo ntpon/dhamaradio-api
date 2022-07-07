@@ -10,6 +10,8 @@ import { User } from "./User"
 
 @Table({
   tableName: "roles",
+  timestamps: true,
+  underscored: true,
 })
 export class Role extends Model {
   public id!: number
@@ -33,18 +35,6 @@ export class Role extends Model {
     field: "is_active",
   })
   public isActive!: boolean
-
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updatedOn: Date
 
   @HasMany(() => User, {
     onDelete: "RESTRICT",

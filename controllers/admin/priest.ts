@@ -115,7 +115,7 @@ export const getAllPriest = async (
       limit,
       offset,
       where: { ...conditionSearch },
-      order: [["updatedOn", "DESC"]],
+      order: [["updatedAt", "DESC"]],
     })
     let totalPage = null
     if (priests.count > 0) {

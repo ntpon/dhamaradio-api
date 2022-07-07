@@ -8,6 +8,8 @@ import {
 
 @Table({
   tableName: "contacts",
+  timestamps: true,
+  underscored: true,
 })
 export class Contact extends Model {
   public id!: number
@@ -59,16 +61,4 @@ export class Contact extends Model {
     defaultValue: true,
   })
   public isActive!: boolean
-
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updateDate: Date
 }

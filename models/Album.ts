@@ -13,6 +13,8 @@ import { Priest } from "./Priest"
 
 @Table({
   tableName: "albums",
+  timestamps: true,
+  underscored: true,
 })
 export class Album extends Model {
   public id!: number
@@ -71,18 +73,6 @@ export class Album extends Model {
     defaultValue: true,
   })
   public isActive!: boolean
-
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updatedOn: Date
 
   @BelongsTo(() => Priest)
   priest: Priest

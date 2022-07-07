@@ -66,7 +66,7 @@ export const getAllRole = async (
       where: {
         ...conditionSearch,
       },
-      order: [["updatedOn", "DESC"]],
+      order: [["updatedAt", "DESC"]],
     })
     let totalPage = null
     if (roles.count > 0) {

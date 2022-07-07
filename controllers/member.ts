@@ -12,6 +12,7 @@ import { Album } from "../models/Album"
 import { Priest } from "../models/Priest"
 import { Contact } from "../models/Contact"
 import { User } from "../models/User"
+import { col, literal } from "sequelize"
 
 export const getPlaylists = async (
   req: Request,
@@ -45,6 +46,7 @@ export const getPlaylistsWithCountAudio = async (
     },
     include: {
       model: Audio,
+      as: "audios",
       attributes: ["id"],
       where: {
         isActive: true,
@@ -102,17 +104,42 @@ export const createAudioToPlaylist = async (
       }),
     ])
 
-    if (playlistAudio) {
+    if (playlistAudio && slug !== "HISTORY") {
       throw HttpError.badRequest("มีเสียงนี้อยู่ในรายการแล้ว")
     }
 
     if (!audio) {
       return next(HttpError.notFound("ไม่พบเสียงนี้"))
     }
+    if (slug === "HISTORY") {
+      const history = await PlaylistAudio.findOne({
+        where: {
+          playlistId: myPlaylist.id,
+          audioId,
+        },
+        include: {
+          model: Audio,
+          as: "audio",
+          attributes: ["id"],
+          where: {
+            isActive: true,
+          },
+          required: false,
+        },
+      })
+      if (history) {
+        const time = new Date().getTime() - history.createdAt.getTime()
+        if (time < 60000) {
+          return res.json({
+            message: "เสียงไม่ถูกเพิ่ม",
+          })
+        }
+      }
+    }
 
     await PlaylistAudio.create({
       playlistId: myPlaylist.id,
-      audioId,
+      audioId: audio.id,
     })
 
     res.json({
@@ -136,31 +163,80 @@ export const getPlaylistBySlug = async (
         userId: req.user.id,
         type: slug,
       }
+      // Return all history in playlist
+      const playlist = await Playlist.findOne({
+        where: {
+          userId: req.user.id,
+          type: slug,
+        },
+      })
+      if (playlist) {
+        const data = await PlaylistAudio.findAll({
+          attributes: ["id", "audioId"],
+          where: {
+            playlistId: playlist.id,
+          },
+          include: {
+            model: Audio,
+            as: "audio",
+            where: {
+              isActive: true,
+            },
+            include: [
+              {
+                model: Album,
+                as: "album",
+                attributes: ["id", "name", "coverImage"],
+                include: [
+                  {
+                    model: Priest,
+                    as: "priest",
+                    attributes: ["id", "fullName", "avatar"],
+                  },
+                ],
+              },
+            ],
+          },
+        })
+        res.json({
+          playlist: data,
+        })
+      }
     } else {
       condition = {
         slug,
         userId: req.user.id,
       }
     }
+
+    // Order by createdAt of PlaylistAudio desc
+
     const myPlaylist = await Playlist.findOne({
       attributes: ["slug", "name", "coverImage", "description"],
       where: condition,
       include: [
         {
           model: Audio,
-          attributes: ["id", "name", "source", "creationDate"],
-          through: { attributes: [] },
+          as: "audios",
+          required: true,
+
+          // through: {
+          //   // attributes: ["updatedAt"],
+          //   as: "playlist_audios",
+          // },
+
           where: {
             isActive: true,
           },
-          required: false,
           include: [
             {
               model: Album,
+              as: "album",
               attributes: ["name"],
               include: [
                 {
                   model: Priest,
+                  as: "priest",
                   attributes: ["fullName"],
                 },
               ],
@@ -168,7 +244,9 @@ export const getPlaylistBySlug = async (
           ],
         },
       ],
+      order: [["audios", PlaylistAudio, "updatedAt", "DESC"]],
     })
+
     if (!myPlaylist) {
       throw HttpError.badRequest("ไม่พบรายการนี้")
     }

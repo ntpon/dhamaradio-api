@@ -20,6 +20,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findByPk(decodedToken.id, {
       include: {
         model: Role,
+        as: "role",
       },
     })
     if (!user) {

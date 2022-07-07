@@ -8,6 +8,8 @@ import {
 
 @Table({
   tableName: "quotes",
+  timestamps: true,
+  underscored: true,
 })
 export class Quote extends Model {
   public id!: number
@@ -37,16 +39,4 @@ export class Quote extends Model {
     defaultValue: true,
   })
   public isActive!: boolean
-
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updateDate: Date
 }

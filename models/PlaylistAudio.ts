@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   BelongsToMany,
   Column,
   CreatedAt,
@@ -12,12 +13,23 @@ import { Playlist } from "./Playlist"
 
 @Table({
   tableName: "playlist_audios",
+  timestamps: true,
+  underscored: true,
 })
 export class PlaylistAudio extends Model {
+  @Column({
+    allowNull: false,
+    primaryKey: true,
+    unique: true,
+    autoIncrement: true,
+  })
+  public id!: number
+
   @ForeignKey(() => Playlist)
   @Column({
     allowNull: false,
     field: "playlist_id",
+    unique: false,
   })
   public playlistId!: number
 
@@ -28,15 +40,9 @@ export class PlaylistAudio extends Model {
   })
   public audioId!: number
 
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
+  @BelongsTo(() => Playlist)
+  public playlist!: Playlist
 
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updatedOn: Date
+  @BelongsTo(() => Audio)
+  public audio!: Audio
 }

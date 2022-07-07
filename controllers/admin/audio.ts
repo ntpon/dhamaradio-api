@@ -113,14 +113,16 @@ export const getAllAudio = async (
       include: [
         {
           model: Album,
+          as: "album",
           include: [
             {
               model: Priest,
+              as: "priest",
             },
           ],
         },
       ],
-      order: [["updatedOn", "DESC"]],
+      order: [["updatedAt", "DESC"]],
     })
     let totalPage = null
     if (audios.count > 0) {

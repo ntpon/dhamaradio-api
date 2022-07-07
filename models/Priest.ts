@@ -11,6 +11,8 @@ import { Album } from "./Album"
 
 @Table({
   tableName: "priests",
+  timestamps: true,
+  underscored: true,
 })
 export class Priest extends Model {
   public id!: number
@@ -47,18 +49,6 @@ export class Priest extends Model {
     defaultValue: true,
   })
   public isActive!: boolean
-
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updatedOn: Date
 
   @HasMany(() => Album)
   albums: Album[]

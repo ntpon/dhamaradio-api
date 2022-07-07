@@ -14,6 +14,8 @@ import { PlaylistAudio } from "./PlaylistAudio"
 
 @Table({
   tableName: "audios",
+  timestamps: true,
+  underscored: true,
 })
 export class Audio extends Model {
   public id!: number
@@ -58,21 +60,14 @@ export class Audio extends Model {
   })
   public isActive!: boolean
 
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updatedOn: Date
-
   @BelongsTo(() => Album)
   album!: Album
 
-  @BelongsToMany(() => Playlist, () => PlaylistAudio)
+  @BelongsToMany(() => Playlist, {
+    through: {
+      model: () => PlaylistAudio,
+      unique: false,
+    },
+  })
   playlists!: Playlist[]
 }

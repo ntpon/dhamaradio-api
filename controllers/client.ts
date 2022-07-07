@@ -18,7 +18,7 @@ export const getQuoteAndAlbumRecommend = async (
   const [quotes, albumsRecommend, albumsPriest] = await Promise.all([
     Quote.findAll({
       attributes: {
-        exclude: ["creationDate", "updateDate"],
+        exclude: ["createdAt", "updateDate"],
       },
       where: {
         isActive: true,
@@ -26,7 +26,7 @@ export const getQuoteAndAlbumRecommend = async (
     }),
     Album.findAll({
       attributes: {
-        exclude: ["creationDate", "updateDate", "totalView"],
+        exclude: ["createdAt", "updateDate", "totalView"],
       },
       where: {
         isActive: true,
@@ -35,7 +35,7 @@ export const getQuoteAndAlbumRecommend = async (
     }),
     Album.findAll({
       attributes: {
-        exclude: ["creationDate", "updateDate", "totalView"],
+        exclude: ["createdAt", "updateDate", "totalView"],
       },
       where: {
         priestId: "1",
@@ -112,6 +112,7 @@ export const getPriestBySlug = async (
     },
     include: {
       model: Album,
+      as: "albums",
       attributes: ["name", "description", "coverImage", "slug"],
       where: {
         isActive: true,
@@ -147,20 +148,22 @@ export const getAlbumBySlug = async (
   try {
     const { slug } = req.params
     const album = await Album.findOne({
-      attributes: ["slug", "name", "coverImage", "description"],
+      attributes: ["slug", "name", "coverImage", "description", "createdAt"],
       where: {
         slug,
       },
       include: [
         {
           model: Audio,
-          attributes: ["id", "name", "source", "creationDate"],
+          as: "audios",
+          attributes: ["id", "name", "source", "createdAt"],
           where: {
             isActive: true,
           },
         },
         {
           model: Priest,
+          as: "priest",
           attributes: ["fullName"],
           where: {
             isActive: true,

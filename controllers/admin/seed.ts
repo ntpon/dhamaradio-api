@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express"
 import bcrypt from "bcryptjs"
+import { v4 as uuidv4 } from "uuid"
 import { Role } from "../../models/Role"
 import { User } from "../../models/User"
 import { Quote } from "../../models/Quote"
@@ -10,6 +11,7 @@ import albumsData from "../../data/albums.json"
 import audiosData from "../../data/audios.json"
 import { Album } from "../../models/Album"
 import { Audio } from "../../models/Audio"
+import { Playlist } from "../../models/Playlist"
 export const createRoleWithAdmin = async (
   req: Request,
   res: Response,
@@ -40,6 +42,23 @@ export const createRoleWithAdmin = async (
       email: "admin@admin.com",
       password: hashedPassword,
     })
+
+    await Playlist.bulkCreate([
+      {
+        name: "รายการโปรด",
+        description: "รายการโปรดของคุณ",
+        slug: uuidv4(),
+        type: "DEFAULT",
+        userId: admin.id,
+      },
+      {
+        name: "ประวัติการฟัง",
+        description: "ประวัติการฟังเสียงทั้งหมด",
+        slug: uuidv4(),
+        type: "HISTORY",
+        userId: admin.id,
+      },
+    ])
 
     return res.json({
       status: "success",

@@ -18,6 +18,8 @@ type PlaylistType = "DEFAULT" | "CREATE"
 
 @Table({
   tableName: "playlists",
+  timestamps: true,
+  underscored: true,
 })
 export class Playlist extends Model {
   public id!: number
@@ -75,21 +77,14 @@ export class Playlist extends Model {
   })
   public isActive!: boolean
 
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updatedOn: Date
-
   @BelongsTo(() => User)
   user: User
 
-  @BelongsToMany(() => Audio, () => PlaylistAudio)
+  @BelongsToMany(() => Audio, {
+    through: {
+      model: () => PlaylistAudio,
+      unique: false,
+    },
+  })
   audios: Audio[]
 }

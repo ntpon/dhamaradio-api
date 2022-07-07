@@ -4,12 +4,12 @@ import helmet from "helmet"
 import { v2 as cloudinary } from "cloudinary"
 import cors from "cors"
 import { sequelize } from "./database/sequelize"
-
 import authRoute from "./routes/auth"
 import clientRoute from "./routes/client"
 import memberRoute from "./routes/member"
 
 import seedRoute from "./routes/admin/seed"
+import dashboardAdminRoute from "./routes/admin/dashboard"
 import roleAdminRoute from "./routes/admin/role"
 import userAdminRoute from "./routes/admin/user"
 import albumAdminRoute from "./routes/admin/album"
@@ -18,8 +18,8 @@ import quoteAdminRoute from "./routes/admin/quote"
 import priestAdminRoute from "./routes/admin/priest"
 import contactAdminRoute from "./routes/admin/contact"
 import { errorHandler, errorRoute } from "./utils/errorHandler"
-
 dotenv.config()
+
 const app = express()
 
 app.use(helmet())
@@ -40,6 +40,7 @@ app.use("/api/v1/client", clientRoute)
 app.use("/api/v1/member", memberRoute)
 
 app.use("/api/v1/admin/seed", seedRoute)
+app.use("/api/v1/admin/dashboard", dashboardAdminRoute)
 app.use("/api/v1/admin/role", roleAdminRoute)
 app.use("/api/v1/admin/user", userAdminRoute)
 app.use("/api/v1/admin/album", albumAdminRoute)

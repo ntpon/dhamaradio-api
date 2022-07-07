@@ -203,9 +203,10 @@ export const getAllUser = async (
       },
       include: {
         model: Role,
+        as: "role",
         attributes: ["name"],
       },
-      order: [["updatedOn", "DESC"]],
+      order: [["updatedAt", "DESC"]],
     })
     let totalPage = null
     if (users.count > 0) {
@@ -230,6 +231,7 @@ export const getUserById = async (
       },
       include: {
         model: Role,
+        as: "role",
         attributes: ["name", "id"],
       },
     })

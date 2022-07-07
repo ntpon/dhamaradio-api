@@ -114,6 +114,7 @@ export const login = async (
       },
       include: {
         model: Role,
+        as: "role",
       },
     })
     if (!user) {
