@@ -131,7 +131,7 @@ export const login = async (
     }
 
     if (role) {
-      if (user.role.name !== "user") {
+      if (user.role.name === "user") {
         throw HttpError.unauthorized("คุณไม่มีสิทธิ์ในการเข้าถึงข้อมูลนี้")
       }
     }
