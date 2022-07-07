@@ -61,18 +61,6 @@ export class User extends Model {
   })
   public isActive!: boolean
 
-  @CreatedAt
-  @Column({
-    field: "created_at",
-  })
-  creationDate: Date
-
-  @UpdatedAt
-  @Column({
-    field: "updated_at",
-  })
-  updatedOn: Date
-
   @HasMany(() => Playlist)
   playlists: Playlist[]
 
